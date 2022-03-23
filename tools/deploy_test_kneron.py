@@ -6,7 +6,6 @@ import warnings
 
 import mmcv
 import torch
-from mmcv.parallel import MMDataParallel
 from mmcv.runner import get_dist_info
 from mmcv.utils import DictAction
 
@@ -155,7 +154,6 @@ def main():
     else:
         tmpdir = None
 
-    model = MMDataParallel(model, device_ids=[0])
     results = single_gpu_test(
         model,
         data_loader,

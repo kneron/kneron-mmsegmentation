@@ -335,6 +335,9 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
     def forward_train(self, imgs, img_metas, **kwargs):
         raise NotImplementedError('This method is not implemented.')
 
+    def forward_test(self, imgs, img_metas, **kwargs):
+        return super().forward_test(imgs, img_metas[0].data, **kwargs)
+
     @torch.no_grad()
     def simple_test(self, img: torch.Tensor,
                     img_meta: Union[Iterable, None] = None,
