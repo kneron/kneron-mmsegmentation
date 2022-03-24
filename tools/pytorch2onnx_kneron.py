@@ -2,6 +2,7 @@
 # Original: tools/pytorch2onnx.py, modified by Kneron
 import argparse
 
+import onnx
 import mmcv
 import numpy as np
 import onnxruntime as rt
@@ -17,6 +18,10 @@ from mmseg.apis import show_result_pyplot
 from mmseg.apis.inference import LoadImage
 from mmseg.datasets.pipelines import Compose
 from mmseg.models import build_segmentor
+
+from optimizer_scripts.pytorch_exported_onnx_preprocess import (
+    torch_exported_onnx_flow,
+)
 
 torch.manual_seed(3)
 
@@ -117,10 +122,12 @@ def pytorch2onnx(model,
             dynamic_axes=None)
         print(f'Successfully exported ONNX model: {output_file}')
     model.forward = origin_forward
+    # NOTE: optimizing onnx for kneron inference
+    m = onnx.load(output_file)
+    m = torch_exported_onnx_flow(m, disable_fuse_bn=False)
+    onnx.save(m, output_file)
 
     if verify:
-        # check by onnx
-        import onnx
         onnx_model = onnx.load(output_file)
         onnx.checker.check_model(onnx_model)
 
