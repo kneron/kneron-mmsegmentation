@@ -227,9 +227,9 @@ def pytorch2onnx(model,
             m.graph, i_n.name, norm_bn_bias, norm_bn_scale
         )
         m = other.polish_model(m)
-        bn_outf = os.path.splitext(output_file)[0] + "_kneron_optimized.onnx"
+        bn_outf = os.path.splitext(output_file)[0] + "_bn_prepended.onnx"
         onnx.save(m, bn_outf)
-        print(f"ONNX for quantization saved to {bn_outf}")
+        print(f"BN-Prepended ONNX saved to {bn_outf}")
 
     return
 
