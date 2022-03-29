@@ -2,6 +2,7 @@
 # Original: tools/pytorch2onnx.py, modified by Kneron
 import argparse
 
+import warnings
 import os
 import onnx
 import mmcv
@@ -293,15 +294,24 @@ if __name__ == '__main__':
         else:
             img_scale = cfg.test_pipeline[1]['img_scale']
             input_shape = (1, 3, img_scale[1], img_scale[0])
-    elif len(args.shape) == 1:
-        input_shape = (1, 3, args.shape[0], args.shape[0])
-    elif len(args.shape) == 2:
-        input_shape = (
-            1,
-            3,
-        ) + tuple(args.shape)
     else:
-        raise ValueError('invalid input shape')
+        if test_mode == 'slide':
+            warnings.warn(
+                "We suggest you NOT assigning shape when exporting "
+                "slide-mode models. Assigning shape to slide-mode models "
+                "may result in unexpected results. To see which mode the "
+                "model is using, check cfg.model.test_cfg.mode, which "
+                "should be either 'whole' or 'slide'."
+            )
+        if len(args.shape) == 1:
+            input_shape = (1, 3, args.shape[0], args.shape[0])
+        elif len(args.shape) == 2:
+            input_shape = (
+                1,
+                3,
+            ) + tuple(args.shape)
+        else:
+            raise ValueError('invalid input shape')
 
     # build the model and load checkpoint
     cfg.model.train_cfg = None

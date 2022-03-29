@@ -66,6 +66,12 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=0.5,
         help='Opacity of painted segmentation map. In (0, 1] range.')
+    parser.add_argument(
+        '--shape',
+        type=int,
+        nargs='+',
+        default=None,
+        help='input image height and width.')
     parser.add_argument('--local_rank', type=int, default=0)
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
@@ -104,6 +110,28 @@ def main():
         cfg.merge_from_dict(args.cfg_options)
     cfg.model.pretrained = None
     cfg.data.test.test_mode = True
+    if args.shape is not None:
+
+        if len(args.shape) == 1:
+            shape = (args.shape[0], args.shape[0])
+        elif len(args.shape) == 2:
+            shape = (args.shape[1], args.shape[0])
+        else:
+            raise ValueError('invalid input shape')
+
+        test_mode = cfg.model.test_cfg.mode
+        if test_mode == 'slide':
+            warnings.warn(
+                "We suggest you NOT assigning shape when exporting "
+                "slide-mode models. Assigning shape to slide-mode models "
+                "may result in unexpected results. To see which mode the "
+                "model is using, check cfg.model.test_cfg.mode, which "
+                "should be either 'whole' or 'slide'."
+            )
+            cfg.model.test_cfg['crop_size'] = shape
+        else:
+            cfg.test_pipeline[1]['img_scale'] = shape
+        cfg.data.test['pipeline'][1]['img_scale'] = shape
 
     # init distributed env first, since logger depends on the dist info.
     distributed = False
