@@ -291,7 +291,11 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
 
 class ONNXRuntimeSegmentorKN(BaseSegmentor):
 
-    def __init__(self, onnx_file: str, cfg: Any, device_id: int = 0):
+    def __init__(
+            self,
+            onnx_file: str,
+            cfg: Any,
+            device_id: Union[int, None] = 0):
         super(ONNXRuntimeSegmentorKN, self).__init__()
         import onnxruntime as ort
 
@@ -301,8 +305,9 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
             from mmcv.ops import get_onnxruntime_op_path
             ort_custom_op_path = get_onnxruntime_op_path()
         except (ImportError, ModuleNotFoundError):
-            warnings.warn('If input model has custom op from mmcv, \
-                you may have to build mmcv with ONNXRuntime from source.')
+            warnings.warn(
+                'If input model has custom op from mmcv, you may '
+                'have to build mmcv with ONNXRuntime from source.')
         session_options = ort.SessionOptions()
         # register custom op for onnxruntime
         if osp.exists(ort_custom_op_path):
@@ -312,6 +317,7 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
         is_cuda_available = ort.get_device() == 'GPU' and torch.cuda.is_available()
         if is_cuda_available:
             providers.insert(0, 'CUDAExecutionProvider')
+            device_id = device_id or 0
             provider_options.insert(0, {'device_id': device_id})
         sess = ort.InferenceSession(
             onnx_file, session_options, providers, provider_options
@@ -397,17 +403,19 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
         if self.test_mode == 'slide':
             seg_pred = self.simple_slide_inference(img, img_meta)
         else:
-            seg_pred = self.sess.run(self.output_name_list, {self.input_name: img})[0]
-        seg_pred = seg_pred.argmax(1)[:, None]
+            seg_pred = self.sess.run(
+                self.output_name_list, {self.input_name: img}
+            )[0]
         if img_meta is not None:
             ori_shape = img_meta[0]['ori_shape']
             if not (ori_shape[0] == seg_pred.shape[-2]
                     and ori_shape[1] == seg_pred.shape[-1]):
                 seg_pred = torch.from_numpy(seg_pred).float()
                 seg_pred = resize(
-                    seg_pred, size=tuple(ori_shape[:2]), mode='nearest')
-                seg_pred = seg_pred.long().detach().cpu().numpy()
-        return list(seg_pred[0])
+                    seg_pred, size=tuple(ori_shape[:2]), mode='bilinear')
+                seg_pred = seg_pred.numpy()
+        seg_pred = seg_pred.argmax(1)
+        return list(seg_pred)
 
     def aug_test(self, imgs, img_metas, **kwargs):
         raise NotImplementedError('This method is not implemented.')

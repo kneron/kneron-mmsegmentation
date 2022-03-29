@@ -115,7 +115,8 @@ class EncoderDecoder(BaseSegmentor):
 
     def forward_dummy(self, img):
         """Dummy forward function."""
-        seg_logit = self.encode_decode(img, None)
+        seg_logit = self.extract_feat(img)
+        seg_logit = self._decode_head_forward_test(seg_logit, None)
 
         return seg_logit
 

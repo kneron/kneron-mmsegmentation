@@ -7,6 +7,7 @@ from mmcv.runner import load_checkpoint
 
 from mmseg.datasets.pipelines import Compose
 from mmseg.models import build_segmentor
+from mmseg.models.segmentors import ONNXRuntimeSegmentorKN
 
 
 def init_segmentor(config, checkpoint=None, device='cuda:0'):
@@ -37,6 +38,30 @@ def init_segmentor(config, checkpoint=None, device='cuda:0'):
     model.cfg = config  # save the config in the model for convenience
     model.to(device)
     model.eval()
+    return model
+
+
+def init_segmentor_kn(config, checkpoint=None, device='cuda:0'):
+    """Initialize a segmentor from config file.
+
+    Args:
+        config (str or :obj:`mmcv.Config`): Config file path or the config
+            object.
+        checkpoint (str, optional): Checkpoint path. If left as None, the model
+            will not load any weights.
+        device (str, optional) CPU/CUDA device option. Default 'cuda:0'.
+            Use 'cpu' for loading model on CPU.
+    Returns:
+        nn.Module: The constructed segmentor.
+    """
+    if checkpoint is None or not checkpoint.endswith(".onnx"):
+        return init_segmentor(config, checkpoint, device)
+    try:
+        _, device_id = device.split(":")
+        device_id = int(device_id)
+    except Exception:
+        device_id = None if device == 'cpu' else 0
+    model = ONNXRuntimeSegmentorKN(checkpoint, cfg=config, device_id=device_id).eval()
     return model
 
 
@@ -97,6 +122,13 @@ def inference_segmentor(model, img):
     with torch.no_grad():
         result = model(return_loss=False, rescale=True, **data)
     return result
+
+
+def inference_segmentor_kn(model, img):
+    if model.endswith(".onnx"):
+        pass
+    else:
+        return inference_segmentor(model, img)
 
 
 def show_result_pyplot(model,
