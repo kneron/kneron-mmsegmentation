@@ -61,7 +61,9 @@ def init_segmentor_kn(config, checkpoint=None, device='cuda:0'):
         device_id = int(device_id)
     except Exception:
         device_id = None if device == 'cpu' else 0
-    model = ONNXRuntimeSegmentorKN(checkpoint, cfg=config, device_id=device_id).eval()
+    model = ONNXRuntimeSegmentorKN(
+        checkpoint, cfg=config, device_id=device_id
+    ).eval()
     return model
 
 
@@ -124,9 +126,17 @@ def inference_segmentor(model, img):
     return result
 
 
+@torch.no_grad()
 def inference_segmentor_kn(model, img):
     if model.endswith(".onnx"):
-        pass
+        cfg = model.cfg
+        test_pipeline = [LoadImage()] + cfg.data.test.pipeline[1:]
+        test_pipeline = Compose(test_pipeline)
+        data = dict(img=img)
+        data = test_pipeline(data)
+        data = collate([data], samples_per_gpu=1)
+        data['img_metas'] = [i.data[0] for i in data['img_metas']]
+        return model(return_loss=False, rescale=True, **data)
     else:
         return inference_segmentor(model, img)
 
