@@ -411,6 +411,10 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
         preds /= self.count_mat
         return preds
 
+    @property
+    def module(self):
+        return self
+
     @torch.no_grad()
     def simple_test(
             self,
@@ -426,7 +430,6 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
             seg_pred = self.sess.run(
                 self.output_name_list, {self.input_name: img}
             )[0]
-        print(img.shape, seg_pred.shape)
         if img_meta is not None:
             ori_shape = img_meta[0]['ori_shape']
             if not (ori_shape[0] == seg_pred.shape[-2]
