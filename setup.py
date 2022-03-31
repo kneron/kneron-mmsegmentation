@@ -170,13 +170,13 @@ if __name__ == '__main__':
     setup(
         name='mmsegmentation',
         version=get_version(),
-        description='Open MMLab Semantic Segmentation Toolbox and Benchmark',
+        description='Open MMLab Semantic Segmentation Toolbox and Benchmark (Kneron Edition)',
         long_description=readme(),
         long_description_content_type='text/markdown',
-        author='MMSegmentation Contributors',
-        author_email='openmmlab@gmail.com',
+        author='MMSegmentation Contributors and Kneron',
+        author_email='',
         keywords='computer vision, semantic segmentation',
-        url='http://github.com/open-mmlab/mmsegmentation',
+        url='http://github.com/kneron/MMSegmentationKN',
         packages=find_packages(exclude=('configs', 'tools', 'demo')),
         include_package_data=True,
         classifiers=[
@@ -191,10 +191,11 @@ if __name__ == '__main__':
         license='Apache License 2.0',
         install_requires=parse_requirements('requirements/runtime.txt'),
         extras_require={
-            'all': parse_requirements('requirements.txt'),
+            'all': parse_requirements('requirements_kneron.txt'),
             'tests': parse_requirements('requirements/tests.txt'),
             'build': parse_requirements('requirements/build.txt'),
             'optional': parse_requirements('requirements/optional.txt'),
+            'onnx': parse_requirements('requirements/onnx.txt'),
         },
         ext_modules=[],
         zip_safe=False)
