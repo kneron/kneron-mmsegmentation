@@ -279,7 +279,7 @@ print("\nNpu performance evaluation result:\n" + str(eval_result))
 ```
 
 ### Step 5-6: quantize the onnx model
-We [sampled 3 images from Cityscapes dataset](?) (3 images) as quantization data. To test our quantized model:
+We [sampled 3 images from Cityscapes dataset](https://www.kneron.com/tw/support/education-center/?folder=MMLab/MMSegmentationKN/&download=41) (3 images) as quantization data. To test our quantized model:
 1. Download the zip file 
 2. Extract the zip file as a folder named `cityscapes_minitest`
 3. Put the `cityscapes_minitest` into docker mounted folder (the path in docker container should be `/data1/cityscapes_minitest`)
@@ -298,7 +298,7 @@ for (dirpath, dirnames, filenames) in walk("/data1/cityscapes_minitest"):
         image = Image.open(fullpath)
         image = image.convert("RGB")
         image = Image.fromarray(np.array(image)[...,::-1])
-        img_data = np.array(image.resize((640, 640), Image.BILINEAR)) / 256 - 0.5
+        img_data = np.array(image.resize((1024, 512), Image.BILINEAR)) / 256 - 0.5
         print(fullpath)
         img_list.append(img_data)
 ```
