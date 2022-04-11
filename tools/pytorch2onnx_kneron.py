@@ -1,3 +1,4 @@
+# All modification made by Kneron Corporation: Copyright (c) 2022 Kneron Corporation
 # Copyright (c) OpenMMLab. All rights reserved.
 # Original: tools/pytorch2onnx.py, modified by Kneron
 import argparse
