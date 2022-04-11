@@ -1,6 +1,5 @@
 # All modification made by Kneron Corp.: Copyright (c) 2022 Kneron Corp.
 # Copyright (c) OpenMMLab. All rights reserved.
-# Original: tools/pytorch2onnx.py, modified by Kneron
 import argparse
 
 import warnings
@@ -279,7 +278,9 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    assert args.opset_version == 11, "kneron_toolchain currently only supports opset 11"
+    assert args.opset_version == 11, (
+        "kneron_toolchain currently only supports opset 11"
+    )
 
     cfg = mmcv.Config.fromfile(args.config)
     if args.cfg_options is not None:
