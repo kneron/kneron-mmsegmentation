@@ -163,9 +163,9 @@ def main():
     efficient_test = eval_kwargs.get('efficient_test', False)
     if efficient_test:
         warnings.warn(
-            '``efficient_test=True`` does not have effect in tools/test_kneron.py, '
-            'the evaluation and format results are CPU memory efficient by '
-            'default')
+            '"efficient_test=True" does not have effect in '
+            'tools/test_kneron.py, the evaluation and format '
+            'results are CPU memory efficient by default')
 
     eval_on_format_results = (
         args.eval is not None and 'cityscapes' in args.eval)
