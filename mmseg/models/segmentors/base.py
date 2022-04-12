@@ -316,7 +316,9 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
             session_options.register_custom_ops_library(ort_custom_op_path)
         providers = ['CPUExecutionProvider']
         provider_options = [{}]
-        is_cuda_available = ort.get_device() == 'GPU' and torch.cuda.is_available()
+        is_cuda_available = (
+            ort.get_device() == 'GPU' and torch.cuda.is_available()
+        )
         if is_cuda_available:
             providers.insert(0, 'CUDAExecutionProvider')
             device_id = device_id or 0
@@ -334,7 +336,7 @@ class ONNXRuntimeSegmentorKN(BaseSegmentor):
         self.output_name_list = [sess_outputs[0].name]
         self.cfg = cfg  # TODO: necessary?
         self.test_cfg = cfg.model.test_cfg
-        self.test_mode = self.test_cfg.mode  # NOTE: should be 'whole' or 'slide'
+        self.test_mode = self.test_cfg.mode  # NOTE: either 'whole' or 'slide'
         self.is_cuda_available = is_cuda_available
         self.count_mat = None
         try:

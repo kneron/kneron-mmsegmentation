@@ -171,7 +171,8 @@ if __name__ == '__main__':
     setup(
         name='mmsegmentation',
         version=get_version(),
-        description='Open MMLab Semantic Segmentation Toolbox and Benchmark (Kneron Edition)',
+        description='Open MMLab Semantic Segmentation Toolbox '
+                    'and Benchmark (Kneron Edition)',
         long_description=readme(),
         long_description_content_type='text/markdown',
         author='MMSegmentation Contributors and Kneron',

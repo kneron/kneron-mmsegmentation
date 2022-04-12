@@ -2,7 +2,7 @@
 """
 
 import logging
-import onnx.utils
+
 try:
     from onnx import optimizer
 except ImportError:
@@ -15,16 +15,19 @@ from . import eliminating
 from . import fusing
 from . import constant_folding
 from . import removing_transpose
-from . import modhelper
 from .common_pattern import torch_pattern_match, tf_pattern_match
 from .helper import logger
 
-def preprocess(model_proto, disable_fuse_bn=False, duplicate_shared_weights=True):
+
+def preprocess(
+    model_proto, disable_fuse_bn=False, duplicate_shared_weights=True
+):
     """The most common used functions before other processing.
 
     Args:
         model_proto: the original model input
-        duplicate_shared_weights(bool, optional): duplicate shared weights. Defaults to True.
+        duplicate_shared_weights(bool, optional): duplicate shared weights.
+                                                  Defaults to True.
 
     Return:
         the new model after preprocessing
@@ -65,22 +68,28 @@ def preprocess(model_proto, disable_fuse_bn=False, duplicate_shared_weights=True
     replacing.replace_initializer_with_Constant(model_proto.graph)
     other.topological_sort(model_proto.graph)
     m = other.polish_model(model_proto)
-    passes = ['extract_constant_to_initializer',
-              'eliminate_nop_dropout',
-              'eliminate_deadend',
-              'fuse_matmul_add_bias_into_gemm',
-              'fuse_pad_into_conv']
+    passes = [
+        "extract_constant_to_initializer",
+        "eliminate_nop_dropout",
+        "eliminate_deadend",
+        "fuse_matmul_add_bias_into_gemm",
+        "fuse_pad_into_conv",
+    ]
     if not disable_fuse_bn:
-        passes.append('fuse_bn_into_conv')
+        passes.append("fuse_bn_into_conv")
     m = optimizer.optimize(m, passes)
     g = m.graph
-    # Add name again since onnx optimizer higher than 1.7 may remove node names.
+    # Add name again since onnx optimizer higher than 1.7 may remove node names
     other.add_name_to_node(g)
     if duplicate_shared_weights:
-        replacing.replace_initializer_with_Constant(g, duplicate_shared_weights=True)
+        replacing.replace_initializer_with_Constant(
+            g, duplicate_shared_weights=True
+        )
         other.duplicate_param_shared_constant(g)
     else:
-        replacing.replace_initializer_with_Constant(g, duplicate_shared_weights=False)
+        replacing.replace_initializer_with_Constant(
+            g, duplicate_shared_weights=False
+        )
     other.topological_sort(g)
     m = other.polish_model(m)
     g = m.graph
@@ -161,12 +170,12 @@ def pytorch_constant_folding(m):
         other.topological_sort(m.graph)
         while len(m.graph.value_info) != 0:
             m.graph.value_info.pop()
-        
+
         m = other.inference_shapes(m)
         replacing.replace_shape_with_constant(m.graph)
     other.topological_sort(m.graph)
     m = torch_pattern_match(m)
-    m = optimizer.optimize(m, ['eliminate_deadend'])
+    m = optimizer.optimize(m, ["eliminate_deadend"])
     return m
 
 
@@ -206,7 +215,7 @@ def tensorflow_optimization(m):
         replacing.replace_shape_with_constant(m.graph)
     other.topological_sort(m.graph)
     m = tf_pattern_match(m)
-    m = optimizer.optimize(m, ['eliminate_deadend'])
+    m = optimizer.optimize(m, ["eliminate_deadend"])
 
     eliminating.eliminate_consecutive_reshape(m.graph)
     eliminating.eliminate_Squeeze_before_Reshape(m.graph)
@@ -253,6 +262,6 @@ def postprocess(m):
     m = other.polish_model(m)
 
     other.add_output_to_value_info(m.graph)
-    m = optimizer.optimize(m, ['eliminate_deadend'])
-    m.producer_name = 'kneron_formatter'
+    m = optimizer.optimize(m, ["eliminate_deadend"])
+    m.producer_name = "kneron_formatter"
     return m
