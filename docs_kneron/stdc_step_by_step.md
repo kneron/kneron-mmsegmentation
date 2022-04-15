@@ -11,7 +11,7 @@
 **Note:** You need to run `pip uninstall mmcv` first if you have `mmcv` installed.
 If mmcv and mmcv-full are both installed, there will be `ModuleNotFoundError`.
 
-## Step 1-2: Install MMSegmentationKN
+## Step 1-2: Install kneron-mmsegmentation
 
 ### Step 1-2-1: Install PyTorch
 
@@ -37,14 +37,14 @@ pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.9
 
 If you see error messages while installing mmcv-full, please check if your installation instruction matches your installed version of PyTorch and Cuda, and see [MMCV pip Installation Instruction](https://github.com/open-mmlab/mmcv#install-with-pip) for different versions of MMCV compatible to different PyTorch and CUDA versions.
 
-### Step 1-2-3: Clone MMSegmentationKN Repository
+### Step 1-2-3: Clone kneron-mmsegmentation Repository
 
 ```shell
-git clone https://github.com/kneron/MMSegmentationKN.git
-cd MMSegmentationKN
+git clone https://github.com/kneron/kneron-mmsegmentation.git
+cd kneron-mmsegmentation
 ```
 
-### Step 1-2-4: Install Required Python Packages for Building and Installing MMSegmentationKN
+### Step 1-2-4: Install Required Python Libraries for Building and Installing kneron-mmsegmentation
 
 ```shell
 pip install -r requirements_kneron.txt
@@ -53,7 +53,7 @@ pip install -v -e .  # or "python setup.py develop"
 
 # Step 2: Training Models on Standard Datasets 
 
-MMSegmentationKN provides many existing and existing semantic segmentation models in [Model Zoo](https://mmsegmentation.readthedocs.io/en/latest/model_zoo.html), and supports several standard datasets like CityScapes, Pascal Context, Coco Stuff, ADE20K, etc. Here we demonstrate how to train *STDC-Seg*, a semantic segmentation algorithm, on *CityScapes*, a well-known semantic segmentation dataset.
+kneron-mmsegmentation provides many existing and existing semantic segmentation models in [Model Zoo](https://mmsegmentation.readthedocs.io/en/latest/model_zoo.html), and supports several standard datasets like CityScapes, Pascal Context, Coco Stuff, ADE20K, etc. Here we demonstrate how to train *STDC-Seg*, a semantic segmentation algorithm, on *CityScapes*, a well-known semantic segmentation dataset.
 
 ## Step 2-1: Download CityScapes Dataset
 
@@ -66,7 +66,7 @@ MMSegmentationKN provides many existing and existing semantic segmentation model
 
 ## Step 2-2: Dataset Preparation
 
-We suggest that you extract the zipped files to somewhere outside the project directory and symlink (`ln`) the dataset root to `MMSegmentationKN/data` so you can use the dataset outside this project, as shown below:
+We suggest that you extract the zipped files to somewhere outside the project directory and symlink (`ln`) the dataset root to `kneron-mmsegmentation/data` so you can use the dataset outside this project, as shown below:
 
 ```shell
 # Replace all "path/to/your" below with where you want to put the dataset!
@@ -76,14 +76,14 @@ mkdir -p path/to/your/cityscapes
 unzip leftImg8bit_trainvaltest.zip -d path/to/your/cityscapes
 unzip gtFine_trainvaltest.zip -d path/to/your/cityscapes
 
-# symlink dataset to MMSegmentationKN/data  # where "MMSegmentationKN" is the repository you cloned in step 0-4
-mkdir -p MMSegmentationKN/data
-ln -s $(realpath path/to/your/cityscapes) MMSegmentationKN/data
+# symlink dataset to kneron-mmsegmentation/data  # where "kneron-mmsegmentation" is the repository you cloned in step 0-4
+mkdir -p kneron-mmsegmentation/data
+ln -s $(realpath path/to/your/cityscapes) kneron-mmsegmentation/data
 
 # Replace all "path/to/your" above with where you want to put the dataset!
 ```
 
-Then, we need *cityscapesScripts* to preprocess the CityScapes dataset. If you completely followed our [Step 1-2-4](#step-1-2-4-install-required-python-packages-for-building-and-installing-mmsegmentationkn), you should have python package *cityscapesScripts* installed (if no, execute `pip install cityscapesScripts` command).
+Then, we need *cityscapesScripts* to preprocess the CityScapes dataset. If you completely followed our [Step 1-2-4](#step-1-2-4-install-required-python-libraries-for-building-and-installing-kneron-mmsegmentation), you should have python library *cityscapesScripts* installed (if no, execute `pip install cityscapesScripts` command).
 
 ```shell
 # Replace "path/to/your" with where you want to put the dataset!
@@ -101,7 +101,7 @@ Progress: 100.0 %
 The files inside the dataset folder should be something like:
 
 ```plain
-MMSegmentationKN/data/cityscapes
+kneron-mmsegmentation/data/cityscapes
 ├── gtFine
 │   ├── test
 │   │   ├── ...
@@ -138,7 +138,7 @@ Now the dataset should be ready for training.
 Short-Term Dense Concatenate Network (STDC network) is a light-weight network structure for convolutional neural network. If we apply this network structure to semantic segmentation task, it's called STDC-Seg. It's first introduced in [Rethinking BiSeNet For Real-time Semantic Segmentation
 ](https://arxiv.org/abs/2104.13188). Please check the paper if you want to know the algorithm details.
 
-We only need a configuration file to train a deep learning model in either the original MMSegmentation or MMSegmentationKN. STDC-Seg is provided in the original MMSegmentation repository, but the original configuration file needs some modification due to our hardware limitation so that we can apply the trained model to our Kneron dongle. 
+We only need a configuration file to train a deep learning model in either the original MMSegmentation or kneron-mmsegmentation. STDC-Seg is provided in the original MMSegmentation repository, but the original configuration file needs some modification due to our hardware limitation so that we can apply the trained model to our Kneron dongle. 
 
 To make a configuration file compatible with our device, we have to:
 
@@ -147,16 +147,16 @@ To make a configuration file compatible with our device, we have to:
 
 To achieve this, you can modify the `img_scale` in `test_pipeline` and `img_norm_cfg` in the configuration file `configs/_base_/datasets/cityscapes.py`. 
 
-Luckily, here in MMSegmentationKN, we provide a modified STDC-Seg configuration file (`configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py`) so we can easily apply the trained model to our device.
+Luckily, here in kneron-mmsegmentation, we provide a modified STDC-Seg configuration file (`configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py`) so we can easily apply the trained model to our device.
 
 To train STDC-Seg compatible with our device, just execute:
 
 ```shell
-cd MMSegmentationKN
+cd kneron-mmsegmentation
 python tools/train.py configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py
 ```
 
-And MMSegmentationKN will generate `work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes` folder and save the configuration file and all checkpoints there.
+kneron-mmsegmentation will generate `work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes` folder and save the configuration file and all checkpoints there.
 
 # Step 3: Test Trained Model
 `tools/test.py` is a script that generates inference results from test set with our pytorch model and evaluates the results to see if our pytorch model is well trained (if `--eval` argument is given). Note that it's always good to evluate our pytorch model before deploying it.
@@ -209,7 +209,7 @@ Summary:
 
 ## Step 4-1: Export ONNX
 
-`tools/pytorch2onnx_kneron.py` is a script provided by MMSegmentationKN to help users to convert our trained pytorch model to ONNX:
+`tools/pytorch2onnx_kneron.py` is a script provided by kneron-mmsegmentation to help users to convert our trained pytorch model to ONNX:
 ```shell
 python tools/pytorch2onnx_kneron.py \
     work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py \
@@ -222,7 +222,7 @@ python tools/pytorch2onnx_kneron.py \
 
 ## Step 4-2: Verify ONNX
 
-`tools/deploy_test_kneron.py` is a script provided by MMSegmentationKN to help users to verify if our exported ONNX generates similar outputs with what our PyTorch model does:
+`tools/deploy_test_kneron.py` is a script provided by kneron-mmsegmentation to help users to verify if our exported ONNX generates similar outputs with what our PyTorch model does:
 ```shell
 python tools/deploy_test_kneron.py \
     work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py \
@@ -241,19 +241,19 @@ Note that the ONNX results may differ from the PyTorch results due to some imple
 
 # Step 5: Convert ONNX File to [NEF](http://doc.kneron.com/docs/#toolchain/manual/#5-nef-workflow) Model for Kneron Platform
  
-### Step 5-1: Install Kneron toolchain docker:
+## Step 5-1: Install Kneron toolchain docker:
 
-* check [document](http://doc.kneron.com/docs/#toolchain/manual/#1-installation)
+* Check [Kneron Toolchain Installation Document](http://doc.kneron.com/docs/#toolchain/manual/#1-installation)
 
-### Step 5-2: Mout Kneron toolchain docker 
+## Step 5-2: Mount Kneron toolchain docker
 
 * Mount a folder (e.g. '/mnt/hgfs/Competition') to toolchain docker container as `/data1`. The converted ONNX in Step 3 should be put here. All the toolchain operation should happen in this folder.
 ```
 sudo docker run --rm -it -v /mnt/hgfs/Competition:/data1 kneron/toolchain:latest
 ```
 
-### Step 5-3: Import KTC and required lib in python shell
-* Here we demonstrate how to go through all Kneron Toolchain (KTC) flow through Python API:
+## Step 5-3: Import KTC and the required libraries in python
+
 ```python
 import ktc
 import numpy as np
@@ -262,7 +262,8 @@ import onnx
 from PIL import Image
 ```
 
-### Step 5-4: Optimize the onnx model
+## Step 5-4: Optimize the onnx model
+
 ```python
 onnx_path = '/data1/latest.onnx'
 m = onnx.load(onnx_path)
@@ -270,7 +271,7 @@ m = ktc.onnx_optimizer.onnx2onnx_flow(m)
 onnx.save(m,'latest.opt.onnx')
 ```
 
-### Step 5-5: Configure and load data necessary for ktc, and check if onnx is ok for toolchain
+## Step 5-5: Configure and load data needed for ktc, and check if onnx is ok for toolchain
 ```python 
 # npu (only) performance simulation
 km = ktc.ModelConfig((&)model_id_on_public_field, "0001", "720", onnx_model=m)
@@ -278,13 +279,13 @@ eval_result = km.evaluate()
 print("\nNpu performance evaluation result:\n" + str(eval_result))
 ```
 
-### Step 5-6: quantize the onnx model
-We [sampled 3 images from Cityscapes dataset](https://www.kneron.com/tw/support/education-center/?folder=MMLab/MMSegmentationKN/&download=41) (3 images) as quantization data. To test our quantized model:
-1. Download the zip file 
+## Step 5-6: Quantize the onnx model
+We [sampled 3 images from Cityscapes dataset](https://www.kneron.com/tw/support/education-center/?folder=OpenMMLab%20Kneron%20Edition/misc/&download=41) (3 images) as quantization data. To test our quantized model:
+1. Download the [zip file](https://www.kneron.com/tw/support/education-center/?folder=OpenMMLab%20Kneron%20Edition/misc/&download=41)
 2. Extract the zip file as a folder named `cityscapes_minitest`
 3. Put the `cityscapes_minitest` into docker mounted folder (the path in docker container should be `/data1/cityscapes_minitest`)
 
-The following script will do some preprocess(should be the same as training code) on our quantization data, and put it in a list:
+The following script will preprocess (should be the same as training code) our quantization data, and put it in a list:
 
 ```python
 import os
@@ -303,7 +304,7 @@ for (dirpath, dirnames, filenames) in walk("/data1/cityscapes_minitest"):
         img_list.append(img_data)
 ```
 
-Then perform quantization. The BIE model will be generated at `/data1/output.bie`.
+Then perform quantization. The generated BIE model will put generated at `/data1/output.bie`.
 
 ```python
 # fixed-point analysis
@@ -311,7 +312,7 @@ bie_model_path = km.analysis({"input": img_list})
 print("\nFixed-point analysis done. Save bie model to '" + str(bie_model_path) + "'")
 ```
 
-### Step 5-7: Compile
+## Step 5-7: Compile
 
 The final step is compile the BIE model into an NEF model.
 ```python
@@ -322,10 +323,75 @@ print("\nCompile done. Save Nef file to '" + str(nef_model_path) + "'")
 
 You can find the NEF file at `/data1/batch_compile/models_720.nef`. `models_720.nef` is the final compiled model.
 
-# Step 6: Run [NEF](http://doc.kneron.com/docs/#toolchain/manual/#5-nef-workflow) model on KL720
+# Step 6: Run [NEF](http://doc.kneron.com/docs/#toolchain/manual/#5-nef-workflow) model on [KL720 USB accelerator](https://www.kneo.ai/products/hardwares/HW2020122500000007/1)
 
-* Check Kneron PLUS official document:
-  * Python version:
-    http://doc.kneron.com/docs/#plus_python/#_top
-  * C version:
-    http://doc.kneron.com/docs/#plus_c/getting_started/
+* N/A
+
+# Step 7 (For Kneron AI Competition 2022): Run [NEF](http://doc.kneron.com/docs/#toolchain/manual/#5-nef-workflow) model on [KL720 USB accelerator](https://www.kneo.ai/products/hardwares/HW2020122500000007/1)
+
+[WARNING] Don't do this step in toolchain docker enviroment mentioned in Step 5
+
+Recommend you read [Kneron PLUS official document](http://doc.kneron.com/docs/#plus_python/#_top) first.
+
+### Step 7-1: Download and Install PLUS python library(.whl)
+* Go to [Kneron education center](https://www.kneron.com/tw/support/education-center/)
+* Scroll down to OpenMMLab Kneron Edition table
+* Select Kneron Plus v1.13.0 (pre-built python library)
+* Your OS version(Ubuntu, Windows, MacOS, Raspberry pi)
+* Download KneronPLUS-1.3.0-py3-none-any_{your_os}.whl
+* unzip downloaded `KneronPLUS-1.3.0-py3-none-any.whl.zip`
+* pip install KneronPLUS-1.3.0-py3-none-any.whl
+
+### Step 7-2: Download STDC example code
+* Go to [Kneron education center](https://www.kneron.com/tw/support/education-center/)
+* Scroll down to **OpenMMLab Kneron Edition** table
+* Select **kneron-mmsegmentation**
+* Select **STDC**
+* Download **stdc_plus_demo.zip**
+* unzip downloaded **stdc_plus_demo**
+
+### Step 7-3: Test enviroment is ready (require [KL720 USB accelerator](https://www.kneo.ai/products/hardwares/HW2020122500000007/1))
+In `stdc_plus_demo`, we provide a STDC-Seg example model and image for quick test. 
+* Plug in [KL720 USB accelerator](https://www.kneo.ai/products/hardwares/HW2020122500000007/1) into your computer USB port
+* Go to the stdc_plus_demo folder
+```bash
+cd /PATH/TO/stdc_plus_demo
+```
+
+* Install required python libraries
+```bash
+pip install -r requirements.txt
+```
+
+* Run example on [KL720 USB accelerator](https://www.kneo.ai/products/hardwares/HW2020122500000007/1)
+```python
+python KL720DemoGenericInferenceSTDC_BypassHwPreProc.py -nef ./example_stdc_720.nef -img 000000000641.jpg
+```
+
+Then you can see the inference result is saved as output_000000000641.jpg in the same folder.
+The expected result of the command above will be something similar to the following text:
+```plain
+...
+[Connect Device]
+ - Success
+[Set Device Timeout]
+ - Success
+[Upload Model]
+ - Success
+[Read Image]
+ - Success
+[Starting Inference Work]
+ - Starting inference loop 1 times
+ - .
+[Retrieve Inference Node Output ]
+ - Success
+[Output Result Image]
+ - Output bounding boxes on 'output_000000000641.jpg'
+...
+```
+
+### Step 7-4: Run your NEF model and your image on [KL720 USB accelerator](https://www.kneo.ai/products/hardwares/HW2020122500000007/1)
+Use the same script in previous step, but now we change the input NEF model path and image to yours
+```bash
+python KL720DemoGenericInferenceSTDC_BypassHwPreProc.py -img /PATH/TO/YOUR_IMAGE.bmp -nef /PATH/TO/YOUR/720_NEF_MODEL.nef
+```
