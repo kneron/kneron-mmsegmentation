@@ -1,64 +1,27 @@
-<div align="center">
-  <img src="resources/mmseg-logo.png" width="600"/>
-  <div>&nbsp;</div>
-  <div align="center">
-    <b><font size="5">OpenMMLab website</font></b>
-    <sup>
-      <a href="https://openmmlab.com">
-        <i><font size="4">HOT</font></i>
-      </a>
-    </sup>
-    &nbsp;&nbsp;&nbsp;&nbsp;
-    <b><font size="5">OpenMMLab platform</font></b>
-    <sup>
-      <a href="https://platform.openmmlab.com">
-        <i><font size="4">TRY IT OUT</font></i>
-      </a>
-    </sup>
-  </div>
-  <div>&nbsp;</div>
-</div>
-<br />
+# Kneron AI Training/Deployment Platform (mmsegmentation-based)
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmsegmentation)](https://pypi.org/project/mmsegmentation/)
-[![PyPI](https://img.shields.io/pypi/v/mmsegmentation)](https://pypi.org/project/mmsegmentation)
-[![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmsegmentation.readthedocs.io/en/latest/)
-[![badge](https://github.com/open-mmlab/mmsegmentation/workflows/build/badge.svg)](https://github.com/open-mmlab/mmsegmentation/actions)
-[![codecov](https://codecov.io/gh/open-mmlab/mmsegmentation/branch/master/graph/badge.svg)](https://codecov.io/gh/open-mmlab/mmsegmentation)
-[![license](https://img.shields.io/github/license/open-mmlab/mmsegmentation.svg)](https://github.com/open-mmlab/mmsegmentation/blob/master/LICENSE)
-[![issue resolution](https://isitmaintained.com/badge/resolution/open-mmlab/mmsegmentation.svg)](https://github.com/open-mmlab/mmsegmentation/issues)
-[![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmsegmentation.svg)](https://github.com/open-mmlab/mmsegmentation/issues)
-
-Documentation: https://mmsegmentation.readthedocs.io/
-
-English | [简体中文](README_zh-CN.md)
 
 ## Introduction
 
-MMSegmentation is an open source semantic segmentation toolbox based on PyTorch.
-It is a part of the OpenMMLab project.
+  [kneron-mmsegmentation](https://github.com/kneron/kneron-mmsegmentation) is a platform built upon the well-known [mmsegmentation](https://github.com/open-mmlab/mmsegmentation) for mmsegmentation. If you are looking for original mmsegmentation document, please visit [mmsegmentation docs](https://mmsegmentation.readthedocs.io/en/latest/) for detailed mmsegmentation usage.
 
-The master branch works with **PyTorch 1.5+**.
+  In this repository, we provide an end-to-end training/deployment flow to realize on Kneron's AI accelerators: 
 
-![demo image](resources/seg_demo.gif)
-
-### Major features
-
-- **Unified Benchmark**
-
-  We provide a unified benchmark toolbox for various semantic segmentation methods.
-
-- **Modular Design**
-
-  We decompose the semantic segmentation framework into different components and one can easily construct a customized semantic segmentation framework by combining different modules.
-
-- **Support of multiple methods out of box**
-
-  The toolbox directly supports popular and contemporary semantic segmentation frameworks, *e.g.* PSPNet, DeepLabV3, PSANet, DeepLabV3+, etc.
-
-- **High efficiency**
-
-  The training speed is faster than or comparable to other codebases.
+  1. **Training/Evalulation:**
+      - Modified model configuration file and verified for Kneron hardware platform 
+      - Please see [Overview of Benchmark and Model Zoo](#Overview-of-Benchmark-and-Model-Zoo) for Kneron-Verified model list
+  2. **Converting to ONNX:** 
+      - tools/pytorch2onnx_kneron.py (beta)
+      - Export *optimized* and *Kneron-toolchain supported* onnx
+          - Automatically modify model for arbitrary data normalization preprocess
+  3. **Evaluation**
+      - tools/test_kneron.py (beta)
+      - Evaluate the model with *pytorch checkpoint, onnx, and kneron-nef*
+  4. **Testing**
+      - inference_kn (beta)
+      - Verify the converted [NEF](http://doc.kneron.com/docs/#toolchain/manual/#5-nef-workflow) model on Kneron USB accelerator with this API
+  5. **Converting Kneron-NEF:** (toolchain feature)
+     - Convert the trained pytorch model to [Kneron-NEF](http://doc.kneron.com/docs/#toolchain/manual/#5-nef-workflow) model, which could be used on Kneron hardware platform.
 
 ## License
 
@@ -66,132 +29,40 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Changelog
 
-v0.21.0 was released in 2/9/2022.
-Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
+N/A
 
-## Benchmark and model zoo
+## Overview of Benchmark and Kneron Model Zoo
 
-Results and models are available in the [model zoo](docs/en/model_zoo.md).
-
-Supported backbones:
-
-- [x] ResNet (CVPR'2016)
-- [x] ResNeXt (CVPR'2017)
-- [x] [HRNet (CVPR'2019)](configs/hrnet)
-- [x] [ResNeSt (ArXiv'2020)](configs/resnest)
-- [x] [MobileNetV2 (CVPR'2018)](configs/mobilenet_v2)
-- [x] [MobileNetV3 (ICCV'2019)](configs/mobilenet_v3)
-- [x] [Vision Transformer (ICLR'2021)](configs/vit)
-- [x] [Swin Transformer (ICCV'2021)](configs/swin)
-- [x] [Twins (NeurIPS'2021)](configs/twins)
-
-Supported methods:
-
-- [x] [FCN (CVPR'2015/TPAMI'2017)](configs/fcn)
-- [x] [ERFNet (T-ITS'2017)](configs/erfnet)
-- [x] [UNet (MICCAI'2016/Nat. Methods'2019)](configs/unet)
-- [x] [PSPNet (CVPR'2017)](configs/pspnet)
-- [x] [DeepLabV3 (ArXiv'2017)](configs/deeplabv3)
-- [x] [BiSeNetV1 (ECCV'2018)](configs/bisenetv1)
-- [x] [PSANet (ECCV'2018)](configs/psanet)
-- [x] [DeepLabV3+ (CVPR'2018)](configs/deeplabv3plus)
-- [x] [UPerNet (ECCV'2018)](configs/upernet)
-- [x] [ICNet (ECCV'2018)](configs/icnet)
-- [x] [NonLocal Net (CVPR'2018)](configs/nonlocal_net)
-- [x] [EncNet (CVPR'2018)](configs/encnet)
-- [x] [Semantic FPN (CVPR'2019)](configs/sem_fpn)
-- [x] [DANet (CVPR'2019)](configs/danet)
-- [x] [APCNet (CVPR'2019)](configs/apcnet)
-- [x] [EMANet (ICCV'2019)](configs/emanet)
-- [x] [CCNet (ICCV'2019)](configs/ccnet)
-- [x] [DMNet (ICCV'2019)](configs/dmnet)
-- [x] [ANN (ICCV'2019)](configs/ann)
-- [x] [GCNet (ICCVW'2019/TPAMI'2020)](configs/gcnet)
-- [x] [FastFCN (ArXiv'2019)](configs/fastfcn)
-- [x] [Fast-SCNN (ArXiv'2019)](configs/fastscnn)
-- [x] [ISANet (ArXiv'2019/IJCV'2021)](configs/isanet)
-- [x] [OCRNet (ECCV'2020)](configs/ocrnet)
-- [x] [DNLNet (ECCV'2020)](configs/dnlnet)
-- [x] [PointRend (CVPR'2020)](configs/point_rend)
-- [x] [CGNet (TIP'2020)](configs/cgnet)
-- [x] [BiSeNetV2 (IJCV'2021)](configs/bisenetv2)
-- [x] [STDC (CVPR'2021)](configs/stdc)
-- [x] [SETR (CVPR'2021)](configs/setr)
-- [x] [DPT (ArXiv'2021)](configs/dpt)
-- [x] [Segmenter (ICCV'2021)](configs/segmenter)
-- [x] [SegFormer (NeurIPS'2021)](configs/segformer)
-
-Supported datasets:
-
-- [x] [Cityscapes](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#cityscapes)
-- [x] [PASCAL VOC](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#pascal-voc)
-- [x] [ADE20K](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#ade20k)
-- [x] [Pascal Context](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#pascal-context)
-- [x] [COCO-Stuff 10k](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#coco-stuff-10k)
-- [x] [COCO-Stuff 164k](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#coco-stuff-164k)
-- [x] [CHASE_DB1](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#chase-db1)
-- [x] [DRIVE](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#drive)
-- [x] [HRF](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#hrf)
-- [x] [STARE](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#stare)
-- [x] [Dark Zurich](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#dark-zurich)
-- [x] [Nighttime Driving](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#nighttime-driving)
-- [x] [LoveDA](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#loveda)
-- [x] [Potsdam](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#isprs-potsdam)
-- [x] [Vaihingen](https://github.com/open-mmlab/mmsegmentation/blob/master/docs/en/dataset_prepare.md#isprs-vaihingen)
+| Backbone | Crop Size | Mem (GB) | mIoU | Config | Download |
+|:--------:|:---------:|:--------:|:----:|:------:|:--------:|
+| STDC 1   | 512x1024  | 7.15     | 69.29|[config](https://github.com/kneron/kneron-mmsegmentation/tree/master/configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py)|[model](https://github.com/kneron/Model_Zoo/blob/main/mmsegmentation/stdc_1/latest.zip)
 
 ## Installation
+- Please refer to the Step 1 of [docs_kneron/stdc_step_by_step.md#step-1-environment](docs_kneron/stdc_step_by_step.md) for installation.
+- Please refer to [Kneron PLUS - Python: Installation](http://doc.kneron.com/docs/#plus_python/introduction/install_dependency/) for the environment setup for Kneron USB accelerator.
 
-Please refer to [get_started.md](docs/en/get_started.md#installation) for installation and [dataset_prepare.md](docs/en/dataset_prepare.md#prepare-datasets) for dataset preparation.
+## Getting Started
+### Tutorial - Kneron Edition
+- [STDC-Seg: Step-By-Step](docs_kneron/stdc_step_by_step.md): A tutorial for users to get started easily. To see detailed documents, please see below.
 
-## Get Started
+### Documents - Kneron Edition
+- [Kneron ONNX Export] (under development)
+- [Kneron Inference] (under development)
+- [Kneron Toolchain Step-By-Step (YOLOv3)](http://doc.kneron.com/docs/#toolchain/yolo_example/)
+- [Kneron Toolchain Manual](http://doc.kneron.com/docs/#toolchain/manual/#0-overview)
 
-Please see [train.md](docs/en/train.md) and [inference.md](docs/en/inference.md) for the basic usage of MMSegmentation.
-There are also tutorials for [customizing dataset](docs/en/tutorials/customize_datasets.md), [designing data pipeline](docs/en/tutorials/data_pipeline.md), [customizing modules](docs/en/tutorials/customize_models.md), and [customizing runtime](docs/en/tutorials/customize_runtime.md).
-We also provide many [training tricks](docs/en/tutorials/training_tricks.md) for better training and [useful tools](docs/en/useful_tools.md) for deployment.
-
-A Colab tutorial is also provided. You may preview the notebook [here](demo/MMSegmentation_Tutorial.ipynb) or directly [run](https://colab.research.google.com/github/open-mmlab/mmsegmentation/blob/master/demo/MMSegmentation_Tutorial.ipynb) on Colab.
-
-## Citation
-
-If you find this project useful in your research, please consider cite:
-
-```bibtex
-@misc{mmseg2020,
-    title={{MMSegmentation}: OpenMMLab Semantic Segmentation Toolbox and Benchmark},
-    author={MMSegmentation Contributors},
-    howpublished = {\url{https://github.com/open-mmlab/mmsegmentation}},
-    year={2020}
-}
-```
+### Original mmsegmentation Documents
+- [Original mmsegmentation getting started](https://github.com/open-mmlab/mmsegmentation#getting-started): It is recommended to read the original mmsegmentation getting started documents for other mmsegmentation operations.
+- [Original mmsegmentation readthedoc](https://mmsegmentation.readthedocs.io/en/latest/): Original mmsegmentation documents.
 
 ## Contributing
+[kneron-mmsegmentation](https://github.com/kneron/kneron-mmsegmentation) a platform built upon [OpenMMLab-mmsegmentation](https://github.com/open-mmlab/mmsegmentation)
 
-We appreciate all contributions to improve MMSegmentation. Please refer to [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the contributing guideline.
+- For issues regarding to the original [mmsegmentation](https://github.com/open-mmlab/mmsegmentation):
+We appreciate all contributions to improve [OpenMMLab-mmsegmentation](https://github.com/open-mmlab/mmsegmentation). Ongoing projects can be found in out [GitHub Projects](https://github.com/open-mmlab/mmsegmentation/projects). Welcome community users to participate in these projects. Please refer to [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the contributing guideline.
 
-## Acknowledgement
+- For issues regarding to this repository [kneron-mmsegmentation](https://github.com/kneron/kneron-mmsegmentation): Welcome to leave the comment or submit pull requests here to improve kneron-mmsegmentation
 
-MMSegmentation is an open source project that welcome any contribution and feedback.
-We wish that the toolbox and benchmark could serve the growing research
-community by providing a flexible as well as standardized toolkit to reimplement existing methods
-and develop their own new semantic segmentation methods.
 
-## Projects in OpenMMLab
-
-- [MMCV](https://github.com/open-mmlab/mmcv): OpenMMLab foundational library for computer vision.
-- [MMClassification](https://github.com/open-mmlab/mmclassification): OpenMMLab image classification toolbox and benchmark.
-- [MMDetection](https://github.com/open-mmlab/mmdetection): OpenMMLab detection toolbox and benchmark.
-- [MMDetection3D](https://github.com/open-mmlab/mmdetection3d): OpenMMLab's next-generation platform for general 3D object detection.
-- [MMSegmentation](https://github.com/open-mmlab/mmsegmentation): OpenMMLab semantic segmentation toolbox and benchmark.
-- [MMAction2](https://github.com/open-mmlab/mmaction2): OpenMMLab's next-generation action understanding toolbox and benchmark.
-- [MMTracking](https://github.com/open-mmlab/mmtracking): OpenMMLab video perception toolbox and benchmark.
-- [MMPose](https://github.com/open-mmlab/mmpose): OpenMMLab pose estimation toolbox and benchmark.
-- [MMEditing](https://github.com/open-mmlab/mmediting): OpenMMLab image and video editing toolbox.
-- [MMOCR](https://github.com/open-mmlab/mmocr): A Comprehensive Toolbox for Text Detection, Recognition and Understanding.
-- [MMGeneration](https://github.com/open-mmlab/mmgeneration): A powerful toolkit for generative models.
-- [MIM](https://github.com/open-mmlab/mim): MIM Installs OpenMMLab Packages.
-- [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab optical flow toolbox and benchmark.
-- [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab few shot learning toolbox and benchmark.
-- [MMHuman3D](https://github.com/open-mmlab/mmhuman3d): OpenMMLab 3D human parametric model toolbox and benchmark.
-- [MMSelfSup](https://github.com/open-mmlab/mmselfsup): OpenMMLab self-supervised learning toolbox and benchmark.
-- [MMRazor](https://github.com/open-mmlab/mmrazor): OpenMMLab Model Compression Toolbox and Benchmark.
-- [MMDeploy](https://github.com/open-mmlab/mmdeploy): OpenMMLab Model Deployment Framework.
+## Related Projects
+- [kneron-mmdetection](https://github.com/kneron/kneron-mmdetection): Kneron training/deployment platform on [OpenMMLab - mmdetection](https://github.com/open-mmlab/mmdetection) object detection toolbox
