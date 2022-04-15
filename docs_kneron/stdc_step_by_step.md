@@ -205,6 +205,16 @@ Summary:
 +------+-------+-------+
 ```
 
+**NOTE: The training process might take some time, depending on your computation resource. If you just want to take a quick look at the deployment flow, you can download our pretrained model so you can skip Step 1, 2, and 3:**
+```
+# If you don't want to train your own model:
+mkdir -p work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes
+pushd work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes
+wget https://github.com/kneron/Model_Zoo/raw/main/mmsegmentation/stdc_1/latest.zip
+unzip latest.zip
+popd
+```
+
 # Step 4: Export ONNX and Verify
 
 ## Step 4-1: Export ONNX
@@ -212,29 +222,61 @@ Summary:
 `tools/pytorch2onnx_kneron.py` is a script provided by kneron-mmsegmentation to help users to convert our trained pytorch model to ONNX:
 ```shell
 python tools/pytorch2onnx_kneron.py \
-    work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py \
+    configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py \
     --checkpoint work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.pth \
-    --output-file work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.onnx
+    --output-file work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.onnx \
+    --verify
 ```
-* `kn_stdc1_in1k-pre_512x1024_80k_cityscapes/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py` can be your training config.
-* `kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.pth` can be your model checkpoint.
-* `kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.onnx` can be any other path. Here for convenience, the ONNX file is placed in the same folder of our pytorch checkpoint.
+* `configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py` can be your training config.
+* `work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.pth` can be your model checkpoint.
+* `work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.onnx` can be any other path. Here for convenience, the ONNX file is placed in the same folder of our pytorch checkpoint.
 
 ## Step 4-2: Verify ONNX
 
 `tools/deploy_test_kneron.py` is a script provided by kneron-mmsegmentation to help users to verify if our exported ONNX generates similar outputs with what our PyTorch model does:
 ```shell
 python tools/deploy_test_kneron.py \
-    work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py \
+    configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py \
     work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.onnx \
     --eval mIoU
 ```
-* `kn_stdc1_in1k-pre_512x1024_80k_cityscapes/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py` can be your training config.
-* `kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.pth` can be your exported ONNX file.
+* `configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py` can be your training config.
+* `work_dirs/kn_stdc1_in1k-pre_512x1024_80k_cityscapes/latest.pth` can be your exported ONNX file.
 
 The expected result of the command above should be something similar to the following text (the numbers may slightly differ):
 
 ```
+...
++---------------+-------+-------+
+|     Class     |  IoU  |  Acc  |
++---------------+-------+-------+
+|      road     | 97.52 | 98.62 |
+|    sidewalk   | 80.59 | 88.69 |
+|    building   | 89.59 | 95.38 |
+|      wall     | 58.02 | 66.85 |
+|     fence     | 55.37 | 69.76 |
+|      pole     |  44.4 | 52.28 |
+| traffic light | 50.23 | 60.07 |
+|  traffic sign | 62.58 | 70.25 |
+|   vegetation  |  89.0 | 95.27 |
+|    terrain    | 60.47 | 72.27 |
+|      sky      | 90.56 | 97.07 |
+|     person    |  70.7 | 84.88 |
+|     rider     | 48.66 | 61.37 |
+|      car      | 91.58 | 95.98 |
+|     truck     | 73.92 | 82.66 |
+|      bus      | 79.92 | 85.95 |
+|     train     | 66.26 | 75.92 |
+|   motorcycle  | 48.88 | 57.91 |
+|    bicycle    |  66.9 |  82.0 |
++---------------+-------+-------+
+Summary:
+
++------+-------+-------+
+| aAcc |  mIoU |  mAcc |
++------+-------+-------+
+| 94.4 | 69.75 | 78.59 |
++------+-------+-------+
 ```
 
 Note that the ONNX results may differ from the PyTorch results due to some implementation differences between PyTorch and ONNXRuntime.
