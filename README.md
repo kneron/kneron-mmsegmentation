@@ -37,6 +37,8 @@ N/A
 |:--------:|:---------:|:--------:|:----:|:------:|:--------:|
 | STDC 1   | 512x1024  | 7.15     | 69.29|[config](https://github.com/kneron/kneron-mmsegmentation/tree/master/configs/stdc/kn_stdc1_in1k-pre_512x1024_80k_cityscapes.py)|[model](https://github.com/kneron/Model_Zoo/blob/main/mmsegmentation/stdc_1/latest.zip)
 
+NOTE: The performance may slightly differ from the original implementation since the input size is smaller.
+
 ## Installation
 - Please refer to the Step 1 of [docs_kneron/stdc_step_by_step.md#step-1-environment](docs_kneron/stdc_step_by_step.md) for installation.
 - Please refer to [Kneron PLUS - Python: Installation](http://doc.kneron.com/docs/#plus_python/introduction/install_dependency/) for the environment setup for Kneron USB accelerator.
