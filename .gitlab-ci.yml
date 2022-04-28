@@ -15,9 +15,14 @@ building:
     - python setup.py check -m -s
     - python -m pip install -e .
 
-testing:
+mmseg-testing:
   stage: test
   script:
     - python -m coverage run --branch --source mmseg -m pytest tests/
     - python -m coverage xml
     - python -m coverage report -m
+
+kneron-testing:
+  stage: test
+  script:
+    - echo "[WIP] This job test kneron-related functions."
