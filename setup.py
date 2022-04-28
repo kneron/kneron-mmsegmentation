@@ -176,7 +176,7 @@ if __name__ == '__main__':
         long_description=readme(),
         long_description_content_type='text/markdown',
         author='MMSegmentation Contributors and Kneron',
-        author_email='',
+        author_email='info@kneron.us',
         keywords='computer vision, semantic segmentation',
         url='http://github.com/kneron/MMSegmentationKN',
         packages=find_packages(exclude=('configs', 'tools', 'demo')),
