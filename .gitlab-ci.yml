@@ -18,6 +18,6 @@ building:
 testing:
   stage: test
   script:
-    - python -m coverage run --branch --source mmcv -m pytest tests/
+    - python -m coverage run --branch --source mmseg -m pytest tests/
     - python -m coverage xml
     - python -m coverage report -m
