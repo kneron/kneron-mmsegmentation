@@ -376,14 +376,14 @@ You can find the NEF file at `/data1/batch_compile/models_720.nef`. `models_720.
 Recommend you read [Kneron PLUS official document](http://doc.kneron.com/docs/#plus_python/#_top) first.
 
 ### Step 7-1: Download and Install PLUS python library(.whl)
-* Go to [Kneron education center](https://www.kneron.com/tw/support/education-center/)
-* Scroll down to `OpenMMLab Kneron Edition table`
+* Go to [Kneron Education Center](https://www.kneron.com/tw/support/education-center/)
+* Scroll down to `OpenMMLab Kneron Edition` table
 * Select `Kneron Plus v1.3.0 (pre-built python library, firmware)`
 * Select `python library`
-* Select Your OS version(Ubuntu, Windows, MacOS, Raspberry pi)
+* Select Your OS version (Ubuntu, Windows, MacOS, Raspberry pi)
 * Download `KneronPLUS-1.3.0-py3-none-any_{your_os}.whl`
-* unzip downloaded `KneronPLUS-1.3.0-py3-none-any.whl.zip`
-* pip install KneronPLUS-1.3.0-py3-none-any.whl
+* Unzip downloaded `KneronPLUS-1.3.0-py3-none-any.whl.zip`
+* `pip install KneronPLUS-1.3.0-py3-none-any.whl`
 
 ### Step 7-2: Download and upgrade KL720 USB accelerator firmware
 * Go to [Kneron education center](https://www.kneron.com/tw/support/education-center/)
